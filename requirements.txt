@@ -1,0 +1,3 @@
+flask-restful
+flask_jwt_extended
+flask_sqlalchemy
