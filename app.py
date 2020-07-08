@@ -10,6 +10,7 @@ app.secret_key = 'gkp'
 api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
+jwt = JWTManager(app)
 
 @app.before_first_request
 def create_tables():

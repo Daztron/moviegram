@@ -1,4 +1,6 @@
 from flask_restful import Resource, reqparse
+from flask_jwt_extended import jwt_required, create_access_token
+
 from models.user import UserModel
 
 class UserRegister(Resource):
@@ -29,13 +31,16 @@ class UserRegister(Resource):
         user.add_to_db()
         return {"message": f"User {username} added successfully"}, 200
 
+    @jwt_required
     def get(self):
+        # current_user = get_jwt_identity() 
         usernames = []
         users = UserModel.get_usernames()
         for user in users:
             usernames.append(user.get_username())
         return usernames
     
+    @jwt_required
     def delete(self):
         data = UserRegister.parser.parse_args()
         username = data.get("username")
@@ -71,7 +76,8 @@ class UserLogin(Resource):
         if not user:
             return {"message": f"user {username} does not exist"}, 422
         if user.verify_password(password):
-            return {"message": "Login Successfull"}, 200
+            access_token = create_access_token(identity=username)
+            return {"message": "Login Successfull","access_token":access_token}, 200
         return {"message": "Password Incorrect"}, 400
     
 class PasswordReset(Resource):
