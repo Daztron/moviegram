@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from resources.user import UserRegister, UserLogin
+from resources.user import UserRegister, UserLogin, PasswordReset
 
 from db import db
 
@@ -17,6 +17,7 @@ def create_tables():
 
 api.add_resource(UserRegister,'/moviegram/user')
 api.add_resource(UserLogin,'/moviegram/user/login')
+api.add_resource(PasswordReset,'/moviegram/user/reset_password')
 
 
 if __name__ == '__main__':

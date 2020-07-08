@@ -73,3 +73,37 @@ class UserLogin(Resource):
         if user.verify_password(password):
             return {"message": "Login Successfull"}, 200
         return {"message": "Password Incorrect"}, 400
+    
+class PasswordReset(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument(
+        "username",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "current_password",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "new_password",
+        type=str,
+        required=True,
+    )
+
+    def post(self):
+        data = PasswordReset.parser.parse_args()
+        username = data.get("username")
+        current_password = data.get("current_password")
+        new_password = data.get("new_password")
+        if username is None or current_password is None or new_password is None:
+            return {"message": "username/passwords missing :| "}, 422
+        user = UserModel.find_by_uname(username)
+        if not user:
+            return {"message":"Username incorrect :|"}, 422
+        if user.verify_password(current_password):
+            user.hash_password(new_password)
+            user.add_to_db()
+            return {"message":"Password changed successfully :)"}, 200
+        return {"message":"Verification failed"}, 400
